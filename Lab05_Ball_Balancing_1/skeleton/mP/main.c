@@ -56,10 +56,26 @@ int main()
     // initalize variables:
     double plate_angles[] = {0, 0};
     double servo_angles[] = {0, 0, 0};
+    int repeat = 1;     
 
-    /* ********************* */
-    /* Insert your Code here */
-    /* ********************* */
+    while(repeat){
+    printf("Please enter requested plate angles: \n");
+    scanf("%lf",plate_angles);
+    scanf("%lf",plate_angles+1); 
+    
+    inverseKinematics(plate_angles,servo_angles);
+
+    // Limits on the servo angles are already set in the servo command function: 
+    servoCommand(fd,servo_angles);
+
+    printf("Euler (Plate) Angles: %f %f \n", plate_angles[0],plate_angles[1]); 
+    printf("Servo Angles: %f %f %f \n", servo_angles[0],servo_angles[1],servo_angles[2]); 
+    printf("\n Enter 1 to repeat or 0 to stop: ");
+    
+    scanf("%d", &repeat);
+
+    printf("\n \n");
+    }
   }
 
   //////////////////////////////
