@@ -1,5 +1,11 @@
 #include "util.h"
 #include "newton_raphson.h"
+#include <math.h>
+
+#define M_PI 3.14159265358979323846
+#define PI_2 (M_PI / 2.0)
+#define DEG2RAD(angle_deg) ((angle_deg) * M_PI / 180.0)
+#define RAD2DEG(angle_rad) ((angle_rad) * 180.0 / M_PI)
 
 int initBallBalancingRobot(int fd)
 {
@@ -49,8 +55,34 @@ int inverseKinematics(const double *plate_angles, double *servo_angles)
   /* ********************* */
   /* Insert your Code here */
   /* ********************* */
+  double R = bbs.R_plate_joint;
+  double L_1 = bbs.l1;
+  double L_2 = bbs.l2;
+  double P_Z = bbs.plate_height;
 
-  // return -1; // if invalid input angle
+  // TODO return the angles alpha_A,B,C
+  double delta_Z_A = R * sin(DEG2RAD(plate_angles[0]));
+  double delta_Z_B = -0.5 * R * sin(DEG2RAD(plate_angles[0])) + sqrt(3)/2 * R * sin(DEG2RAD(plate_angles[1]));
+  double delta_Z_C = -0.5 * R * sin(DEG2RAD(plate_angles[0])) - sqrt(3)/2 * R * sin(DEG2RAD(plate_angles[1]));  
+
+  double beta_A = acos(pow(((P_Z + delta_Z_A), 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / 2 * L_1 * (P_Z + delta_Z_A));
+  double alpha_A = PI_2 - beta_A;
+  double beta_B = acos(pow(((P_Z + delta_Z_B), 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / 2 * L_1 * (P_Z + delta_Z_B));
+  double alpha_B = PI_2 - beta_B;
+  double beta_C = acos(pow(((P_Z + delta_Z_C), 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / 2 * L_1 * (P_Z + delta_Z_C));
+  double alpha_C = PI_2 - beta_C;
+
+  servo_angles[0] = RAD2DEG(alpha_A);
+  servo_angles[1] = RAD2DEG(alpha_B);
+  servo_angles[2] = RAD2DEG(alpha_C);
+
+  
+  if(fabs(plate_angles[0]) > 45 || fabs(plate_angles[1]) > 45)
+  {
+    printf("ERROR: Plate angles out of bounds.\n");
+    return -1;
+  }
+
   return 0; // if ok
 };
 
