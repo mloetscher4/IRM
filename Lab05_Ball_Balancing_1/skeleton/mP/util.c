@@ -65,11 +65,11 @@ int inverseKinematics(const double *plate_angles, double *servo_angles)
   double delta_Z_B = -0.5 * R * sin(DEG2RAD(plate_angles[0])) + sqrt(3)/2 * R * sin(DEG2RAD(plate_angles[1]));
   double delta_Z_C = -0.5 * R * sin(DEG2RAD(plate_angles[0])) - sqrt(3)/2 * R * sin(DEG2RAD(plate_angles[1]));  
 
-  double beta_A = acos(pow(((P_Z + delta_Z_A), 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / 2 * L_1 * (P_Z + delta_Z_A));
+  double beta_A = acos((pow(P_Z + delta_Z_A, 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / (2 * L_1 * (P_Z + delta_Z_A)));
   double alpha_A = PI_2 - beta_A;
-  double beta_B = acos(pow(((P_Z + delta_Z_B), 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / 2 * L_1 * (P_Z + delta_Z_B));
+  double beta_B = acos((pow(P_Z + delta_Z_B, 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / (2 * L_1 * (P_Z + delta_Z_B)));
   double alpha_B = PI_2 - beta_B;
-  double beta_C = acos(pow(((P_Z + delta_Z_C), 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / 2 * L_1 * (P_Z + delta_Z_C));
+  double beta_C = acos((pow(P_Z + delta_Z_C, 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / (2 * L_1 * (P_Z + delta_Z_C)));
   double alpha_C = PI_2 - beta_C;
 
   servo_angles[0] = RAD2DEG(alpha_A);
