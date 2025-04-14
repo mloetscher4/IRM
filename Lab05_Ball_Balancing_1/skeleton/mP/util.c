@@ -97,52 +97,41 @@ int project2worldFrame(const int x_in, const int y_in, double *x_out, double *y_
   /* Insert your Code here */
   /* ********************* */
 
-  // TODO first normalize before undistorting
+  // 1. scale with calibration factor
+  double u_pix = x_in * bbs.calibration_image_scale;
+  double v_pix = y_in * bbs.calibration_image_scale;
+  
+  // 2. normalize before undistorting (u_bar = K^-1 * u)
+  double u_bar = (u_pix - bbs.distortion_center[0]) / bbs.focal_length;
+  double v_bar = (v_pix - bbs.distortion_center[1]) / bbs.focal_length;
 
-  // 1. undistort in image frame
-  double r_d = sqrt(pow(x_in, 2) + pow(y_in, 2));
+  // 3. undistort images with netwon raphson (r_d is distorted, r is undistorted)
+  double r_d = sqrt(pow(u_bar, 2) + pow(v_bar, 2));
   double r = newtonRaphson(r_d, bbs.radial_distortion_coeff[0], bbs.radial_distortion_coeff[1]);
   
-  double u_norm = r / r_d * x_in;
-  double v_norm = r / r_d * y_in;
+  // 4. undistort in image frame
+  double u_bar_norm = r / r_d * u_bar;
+  double v_bar_norm = r / r_d * v_bar;
 
-  // 2. scale with calibration factor
-  u_norm *= bbs.calibration_image_scale;
-  v_norm *= bbs.calibration_image_scale;
+  // 5. multiply with lambda
+  double lambda = bbs.plate_height; // scaling s.t. the ray (u_bar_norm, v_bar_norm, 1) intersects the plate at z = plate_height in camera frame
 
-  // // 3. unnormalize
-  // double u = (bbs.focal_length * u_norm) + bbs.distortion_center[0];
-  // double v = (bbs.focal_length * v_norm) + bbs.distortion_center[1];
-
-  // 4. multiply with lambda
-  double lambda = bbs.focal_length / (bbs.focal_length + bbs.plate_height);
-  double x = lambda * u_norm;
-  double y = lambda * v_norm;
+  double x_cam = lambda * u_bar_norm;
+  double y_cam = lambda * v_bar_norm;
 
   // 5. subtract translation
-  x -= bbs.t_wc[0];
-  y -= bbs.t_wc[1];
+  x_cam -= bbs.t_wc[0];
+  y_cam -= bbs.t_wc[1];
 
   // 6. apply rotation with R^T = R^(-1) = R^T
   // R^T =  [cos(theta)   sin(theta) 0]
   //        [-sin(theta)  cos(theta) 0]
   //        [0            0          1]
-  double x_world = x * cos(bbs.base_angles[0]) + y * sin(bbs.base_angles[0]);
-  double y_world = - x * sin(bbs.base_angles[0]) + y * cos(bbs.base_angles[0]);
+  double x_world = x_cam * cos(bbs.base_angles[0]) + y_cam * sin(bbs.base_angles[0]);
+  double y_world = - x_cam * sin(bbs.base_angles[0]) + y_cam * cos(bbs.base_angles[0]);
 
-  // 7.  TODO apply plate height
-  double z_rot = bbs.plate_height + bbs.t_wc[2];
-  double r_rot = sqrt(pow(x_rot, 2) + pow(y_rot, 2));
-  double theta = atan2(y_rot, x_rot);
-  double phi = atan2(z_rot, r_rot);
-  double x_final = r_rot * cos(phi) * cos(theta);
-  double y_final = r_rot * cos(phi) * sin(theta);
-
-  // 8. assign values
-  *x_out = x_final;
-  *y_out = y_final;
-
-
+  *x_out = x_world;
+  *y_out = y_world;
 
   return 0;
 };
