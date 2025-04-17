@@ -86,6 +86,34 @@ int main()
   {
 
     // initalize variables:
+    int x_pxy;
+    int y_pxy;
+    double x_wrld;
+    double y_wrld;
+    int successful_read;
+    int ball_detected;
+    int successful_conversion;
+
+    successful_read = readFromPixy(fd, &ball_detected, &x_pxy, &y_pxy);
+
+    if (successful_read == 1)
+    {
+      printf("Error when reading from serial port");
+    }
+    
+    if(ball_detected == 1)
+    {
+      successful_conversion = (x_pxy, y_pxy, &x_wrld, &y_wrld);
+      printf("\n");
+      printf("Distorted Pixel Coordinates\n");
+      printf("x: %i y: %i \n \n", x_pxy, y_wrld);
+      printf("World frame coordinates\n");
+      printf("x: %d y: %d \n");
+    }
+    else if (ball_detected == 0)
+    {
+      printf("No ball was detected");
+    }
 
     /* ********************* */
     /* Insert your Code here */
