@@ -110,25 +110,34 @@ int project2worldFrame(const int x_in, const int y_in, double *x_out, double *y_
   double r = newtonRaphson(r_d, bbs.radial_distortion_coeff[0], bbs.radial_distortion_coeff[1]);
   
   // 4. undistort in image frame
-  double u_bar_norm = r / r_d * u_bar;
-  double v_bar_norm = r / r_d * v_bar;
+  double u_bar_undist = (r / r_d) * u_bar;
+  double v_bar_undist = (r / r_d) * v_bar;
 
-  // 5. multiply with lambda
-  double lambda = bbs.plate_height; // scaling s.t. the ray (u_bar_norm, v_bar_norm, 1) intersects the plate at z = plate_height in camera frame
+  // 5. Unnormalize in image frame 
+  double u_undist = u_bar_undist * bbs.focal_length;
+  double v_undist = v_bar_undist * bbs.focal_length;
+ 
+  // 6. Compute lambda
+  double lambda = bbs.plate_height + bbs.ball_radius - bbs.t_wc[2];
 
-  double x_cam = lambda * u_bar_norm;
-  double y_cam = lambda * v_bar_norm;
+  // 7. Solve for x_world and y_world
+  double x_cam = lambda * u_undist;
+  double y_cam = lambda * v_undist;
 
-  // 5. subtract translation
-  x_cam -= bbs.t_wc[0];
-  y_cam -= bbs.t_wc[1];
+
+  x_cam = x_cam/(-bbs.focal_length);
+  y_cam = y_cam/(-bbs.focal_length);
+
+  
+  double x_world = x_cam + bbs.t_wc[0];
+  double y_world = y_cam + bbs.t_wc[1];
 
   // 6. apply rotation with R^T = R^(-1) = R^T
   // R^T =  [cos(theta)   sin(theta) 0]
   //        [-sin(theta)  cos(theta) 0]
   //        [0            0          1]
-  double x_world = x_cam * cos(bbs.base_angles[0]) + y_cam * sin(bbs.base_angles[0]);
-  double y_world = - x_cam * sin(bbs.base_angles[0]) + y_cam * cos(bbs.base_angles[0]);
+  //double x_world = x_cam * cos(bbs.base_angles[0]) + y_cam * sin(bbs.base_angles[0]);
+  //double y_world = - x_cam * sin(bbs.base_angles[0]) + y_cam * cos(bbs.base_angles[0]);
 
   *x_out = x_world;
   *y_out = y_world;

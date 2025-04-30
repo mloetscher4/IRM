@@ -93,10 +93,12 @@ int main()
     int successful_read;
     int ball_detected;
     int successful_conversion;
+    int repeat = 1; 
 
+    while(repeat){
     successful_read = readFromPixy(fd, &ball_detected, &x_pxy, &y_pxy);
 
-    if (successful_read == 1)
+    if (successful_read == -1)
     {
       printf("Error when reading from serial port");
     }
@@ -106,15 +108,20 @@ int main()
       successful_conversion = project2worldFrame(x_pxy, y_pxy, &x_wrld, &y_wrld);
       printf("\n");
       printf("Distorted Pixel Coordinates\n");
-      printf("x: %i y: %i \n \n", x_pxy, y_wrld);
+      printf("x: %i y: %i \n \n", x_pxy, y_pxy);
       printf("World frame coordinates\n");
-      printf("x: %d y: %d \n");
+      printf("x: %f y: %f \n", x_wrld, y_wrld);
     }
     else if (ball_detected == 0)
     {
       printf("No ball was detected");
     }
+    printf("\n Enter 1 to repeat or 0 to stop: ");
+    
+    scanf("%d", &repeat);
 
+    printf("\n \n");
+    }
     /* ********************* */
     /* Insert your Code here */
     /* ********************* */

@@ -10,7 +10,7 @@ int load_parameters()
   // System Dimensions
   // All lengths in [mm]
   // Change this if you wan't to change plate height:
-  bbs.plate_height = 100;
+  bbs.plate_height = 120;
   // DON'T CHANGE THESE:
   bbs.R_plate_joint = 113.24;
   bbs.R_base_servo = 102.92;
@@ -27,17 +27,17 @@ int load_parameters()
   // **These are dummy parameters and need to be replaced with your calibration**:
   // When pictures are taken in PixyMon, their resolution varies. This factor
   // accounts for this scaling, such that the bbs can be copied directly
-  bbs.calibration_image_scale = 2;
-  bbs.focal_length = 500;
-  bbs.radial_distortion_coeff[0] = -0.2;
-  bbs.radial_distortion_coeff[1] = 0.2;
-  bbs.distortion_center[0] = 500;
-  bbs.distortion_center[1] = 300;
+  bbs.calibration_image_scale = 3.54;
+  bbs.focal_length = 460.6139;
+  bbs.radial_distortion_coeff[0] = -0.2490;
+  bbs.radial_distortion_coeff[1] = 0.0531;
+  bbs.distortion_center[0] = 567.7938;
+  bbs.distortion_center[1] = 361.2566;
 
   // Adjust these if you experience a constant offset in your coordinates the world frame
-  bbs.t_wc[0] = 0;
+  bbs.t_wc[0] = -3;
   bbs.t_wc[1] = 7;
-  bbs.t_wc[2] = 28.1;
+  bbs.t_wc[2] = -21;
 
   return 1;
 }
