@@ -103,7 +103,7 @@ int main()
     
     if(ball_detected == 1)
     {
-      successful_conversion = (x_pxy, y_pxy, &x_wrld, &y_wrld);
+      successful_conversion = project2worldFrame(x_pxy, y_pxy, &x_wrld, &y_wrld);
       printf("\n");
       printf("Distorted Pixel Coordinates\n");
       printf("x: %i y: %i \n \n", x_pxy, y_wrld);
