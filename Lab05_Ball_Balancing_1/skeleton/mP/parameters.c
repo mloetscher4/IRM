@@ -53,8 +53,8 @@ int load_servo()
   // **These are dummy parameters and need to be replaced with your calibration**:
 
   servo.bias_A = 0;
-  servo.bias_B = 0;
-  servo.bias_C = 0;
+  servo.bias_B = 9.936183-12.122352;
+  servo.bias_C = 14.292622-12.122352;
 
   return 1;
 }
