@@ -65,10 +65,26 @@ int main()
     // initalize variables:
     double plate_angles[] = {0, 0};
     double servo_angles[] = {0, 0, 0};
+    int repeat = 1;     
 
-    /* ********************* */
-    /* Insert your Code here (From Lab 05)*/
-    /* ********************* */
+    while(repeat){
+    printf("Please enter requested plate angles: \n");
+    scanf("%lf",plate_angles);
+    scanf("%lf",plate_angles+1); 
+    
+    inverseKinematics(plate_angles,servo_angles);
+
+    // Limits on the servo angles are already set in the servo command function: 
+    servoCommand(fd,servo_angles);
+
+    printf("Euler (Plate) Angles: %f %f \n", plate_angles[0],plate_angles[1]); 
+    printf("Servo Angles: %f %f %f \n", servo_angles[0],servo_angles[1],servo_angles[2]); 
+    printf("\n Enter 1 to repeat or 0 to stop: ");
+    
+    scanf("%d", &repeat);
+
+    printf("\n \n");
+    }
   }
 
   //////////////////////////////
@@ -78,10 +94,45 @@ int main()
   if (task_selection == 2)
   {
     // initalize variables:
+    int x_pxy;
+    int y_pxy;
+    double x_wrld;
+    double y_wrld;
+    int successful_read;
+    int ball_detected;
+    int successful_conversion;
+    int repeat = 1; 
 
-    /* ********************* */
-    /* Insert your Code here (From Lab 05) */
-    /* ********************* */
+    while(repeat){
+    successful_read = readFromPixy(fd, &ball_detected, &x_pxy, &y_pxy);
+
+    if (successful_read == -1)
+    {
+      printf("Error when reading from serial port");
+    }
+
+    if(ball_detected == 1)
+    {
+      successful_conversion = project2worldFrame(x_pxy, y_pxy, &x_wrld, &y_wrld);
+      printf("\n");
+      printf("Distorted Pixel Coordinates\n");
+      printf("x: %i y: %i \n \n", x_pxy, y_pxy);
+      printf("World frame coordinates\n");
+      printf("x: %f y: %f \n", x_wrld, y_wrld);
+    }
+    else if (ball_detected == 0)
+    {
+      printf("No ball was detected");
+    }
+    printf("\n Enter 1 to repeat or 0 to stop: ");
+
+    scanf("%d", &repeat);
+
+    printf("\n \n");
+    }
+    }
+
+    return 0;
   }
 
   //////////////////////////////

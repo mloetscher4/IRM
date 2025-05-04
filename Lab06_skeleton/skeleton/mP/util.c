@@ -3,22 +3,81 @@
 
 int inverseKinematics(const double *plate_angles, double *servo_angles)
 {
-  // TODO: copy + paste your previous work
+  // Load parameters R, L_1, L_2, P_z etc. from parameters file. Example: double R = bbs.R_plate_joint;
+  // Then implement inverse kinematics similar to prelab
 
-  /* ********************* */
-  /* Insert your Code here */
-  /* ********************* */
+  double R = bbs.R_plate_joint;
+  double L_1 = bbs.l1;
+  double L_2 = bbs.l2;
+  double P_Z = bbs.plate_height;
+
+  // TODO return the angles alpha_A,B,C
+  double delta_Z_A = R * sin(DEG2RAD(plate_angles[0]));
+  double delta_Z_B = -0.5 * R * sin(DEG2RAD(plate_angles[0])) + sqrt(3)/2 * R * sin(DEG2RAD(plate_angles[1]));
+  double delta_Z_C = -0.5 * R * sin(DEG2RAD(plate_angles[0])) - sqrt(3)/2 * R * sin(DEG2RAD(plate_angles[1]));  
+
+  double beta_A = acos((pow(P_Z + delta_Z_A, 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / (2 * L_1 * (P_Z + delta_Z_A)));
+  double alpha_A = PI_2 - beta_A;
+  double beta_B = acos((pow(P_Z + delta_Z_B, 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / (2 * L_1 * (P_Z + delta_Z_B)));
+  double alpha_B = PI_2 - beta_B;
+  double beta_C = acos((pow(P_Z + delta_Z_C, 2.0) + pow(L_1, 2.0) - pow(L_2, 2.0)) / (2 * L_1 * (P_Z + delta_Z_C)));
+  double alpha_C = PI_2 - beta_C;
+
+  servo_angles[0] = RAD2DEG(alpha_A);
+  servo_angles[1] = RAD2DEG(alpha_B);
+  servo_angles[2] = RAD2DEG(alpha_C);
+
+  
+  if(fabs(plate_angles[0]) > 45 || fabs(plate_angles[1]) > 45)
+  {
+    printf("ERROR: Plate angles out of bounds.\n");
+    return -1;
+  }
 
   return 0;
 }
 
 int project2worldFrame(const int x_in, const int y_in, double *x_out, double *y_out)
 {
-  // TODO: copy + paste your previous work
+// implement the code to project the coordinates in the image frame to the world frame
+  // make sure to multiply the raw pixy2 coordinates with the scaling factor (ratio between
+  // image fed to python for calibration and pixy2 resolution): bbs.calibration_image_scale.
 
-  /* ********************* */
-  /* Insert your Code here */
-  /* ********************* */
+  // 1. scale with calibration factor
+  double u_pix = x_in * bbs.calibration_image_scale;
+  double v_pix = y_in * bbs.calibration_image_scale;
+  
+  // 2. normalize before undistorting (u_bar = K^-1 * u)
+  double u_bar = (u_pix - bbs.distortion_center[0]) / bbs.focal_length;
+  double v_bar = (v_pix - bbs.distortion_center[1]) / bbs.focal_length;
+
+  // 3. undistort images with netwon raphson (r_d is distorted, r is undistorted)
+  double r_d = sqrt(pow(u_bar, 2) + pow(v_bar, 2));
+  double r = newtonRaphson(r_d, bbs.radial_distortion_coeff[0], bbs.radial_distortion_coeff[1]);
+  
+  // 4. undistort in image frame
+  double u_bar_undist = (r / r_d) * u_bar;
+  double v_bar_undist = (r / r_d) * v_bar;
+
+  // 5. Unnormalize in image frame 
+  double u_undist = u_bar_undist * bbs.focal_length;
+  double v_undist = v_bar_undist * bbs.focal_length;
+ 
+  // 6. Compute lambda
+  double lambda = bbs.plate_height + bbs.ball_radius - bbs.t_wc[2];
+
+  // 7. Solve for x_world and y_world
+  double x_cam = lambda * u_undist;
+  double y_cam = lambda * v_undist;
+
+  x_cam = x_cam/(-bbs.focal_length);
+  y_cam = y_cam/(-bbs.focal_length);
+
+  double x_world = x_cam + bbs.t_wc[0];
+  double y_world = y_cam + bbs.t_wc[1];
+
+  *x_out = x_world;
+  *y_out = y_world;
 
   return 0;
 };
@@ -36,11 +95,14 @@ double discreteDerivative(const double dt, const double *x)
 double movingAverage(const int n, const double *x)
 {
   // TODO: Implement a moving average function
-  /* ********************* */
-  /* Insert your Code here */
-  /* ********************* */
+  // TODO: not sure if this is how we have to do it, as this function now only computes one average value for the first n entries in x
+  double sum = 0.0;
+  
+  for(int i = 0; i<n; i++){
+    sum += x[i];
+  }
 
-  return 0;
+  return sum / n;
 };
 
 double butterWorth(const double *x, const double *y)
