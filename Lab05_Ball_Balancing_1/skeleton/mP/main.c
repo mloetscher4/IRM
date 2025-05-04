@@ -122,9 +122,6 @@ int main()
 
     printf("\n \n");
     }
-    /* ********************* */
-    /* Insert your Code here */
-    /* ********************* */
   }
 
   return 0;

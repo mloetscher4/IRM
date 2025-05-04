@@ -1,0 +1,13 @@
+Postlab Q1: 
+
+The plotted velocity estimate graph clearly depicts the ground truth oscilating velocity. However, the signal is not smooth but has a non-neglectable noise part, 
+especially at the extrema. The PID controller used for our system uses the velocity estimate to compute the derivate of the error state. Inducing noise can be potentially 
+harmful for the performance of the controller and, hence, should me mitigated.
+
+Postlab Q2:
+
+Increasing the window size has two effects. First, increasing the filter size leads to a lower pass threshold. This means that the range of frequencies above this threshold increases and gets fitlered out.
+Basically, omitting the noise better. However, one has to be careful not to filter out the actual underlying dynamics of the system.
+Second, the window size determines the phase shift of the fitlered signal compared to the raw signal. With increasing window size the phase shift increases as well. 
+Based on the maximum delay of 0.16 seconds one should choose n=20 at max. 
+

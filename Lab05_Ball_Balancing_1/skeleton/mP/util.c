@@ -52,9 +52,6 @@ int inverseKinematics(const double *plate_angles, double *servo_angles)
   // Load parameters R, L_1, L_2, P_z etc. from parameters file. Example: double R = bbs.R_plate_joint;
   // Then implement inverse kinematics similar to prelab
 
-  /* ********************* */
-  /* Insert your Code here */
-  /* ********************* */
   double R = bbs.R_plate_joint;
   double L_1 = bbs.l1;
   double L_2 = bbs.l2;
@@ -124,20 +121,11 @@ int project2worldFrame(const int x_in, const int y_in, double *x_out, double *y_
   double x_cam = lambda * u_undist;
   double y_cam = lambda * v_undist;
 
-
   x_cam = x_cam/(-bbs.focal_length);
   y_cam = y_cam/(-bbs.focal_length);
 
-  
   double x_world = x_cam + bbs.t_wc[0];
   double y_world = y_cam + bbs.t_wc[1];
-
-  // 6. apply rotation with R^T = R^(-1) = R^T
-  // R^T =  [cos(theta)   sin(theta) 0]
-  //        [-sin(theta)  cos(theta) 0]
-  //        [0            0          1]
-  //double x_world = x_cam * cos(bbs.base_angles[0]) + y_cam * sin(bbs.base_angles[0]);
-  //double y_world = - x_cam * sin(bbs.base_angles[0]) + y_cam * cos(bbs.base_angles[0]);
 
   *x_out = x_world;
   *y_out = y_world;
