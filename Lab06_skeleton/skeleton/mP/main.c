@@ -130,7 +130,7 @@ int main()
 
     printf("\n \n");
     }
-    }
+    
 
     return 0;
   }
@@ -139,7 +139,7 @@ int main()
   /////// Task 4/5/6 ///////////
   //////////////////////////////
 
-  if ((task_selection == 4) || (task_selection == 5) || (task_selection == 6))
+  if((task_selection == 4) || (task_selection == 5) || (task_selection == 6))
   {
 
     // TODO: Initialize default PID parameters
@@ -148,13 +148,18 @@ int main()
     double k_i = 0;
 
     // TODO: Intialize filter window size
-    int n_pos = 0;
-    int n_vel = 0;
+    int n_pos = 10;
+    int n_vel = 10;
 
     // TODO: Ask for user input to change PID parameters
     /* ********************* */
     /* Insert your Code here */
     /* ********************* */
+    printf("Please enter the PID params Kp, Kd, Ki if you would like to change them!\n");
+    scanf("%f", &k_p);
+    scanf("%f", &k_d);
+    scanf("%f", &k_i);
+
 
     // Variables for Pixy2
     int flag = 0;      // flag that detects if the pixy cam can detect a ball
@@ -185,6 +190,8 @@ int main()
     double y[buf_size];
     double vx[buf_size]; // filtered velocity
     double vy[buf_size];
+    double x_pixy;
+    double y_pixy;
 
     // initialize buffer arrays to zero
     for (int i = 0; i < buf_size; i++)
@@ -227,61 +234,90 @@ int main()
     long t0 = getMicroseconds(); // get starting time of the loop
     double dt = 0.016;           // variable for timing
     double current_time = 0;
+    long counter = 0;
 
     while (1)
     {
-
+      
       /* ********************* */
       /* Insert your Code here */
       /* ********************* */
-
+      
       // TODO: Get current sampling time dt
-
       // TODO: Get the coordinates of the ball in the Pixy Camera frame (Use a function in util.c)
+      readFromPixy(fd, &flag, &x_pixy, &y_pixy);
 
       // If the ball is detected, enter if-bracket
       if (flag)
       {
         // TODO: Use camera calibration form Lab05
+        pushBack(0, x_raw, buf_size);
+        pushBack(0, y_raw, buf_size);
+
+        project2worldFrame(x_pixy, y_pixy, x_raw, y_raw);
 
         // TODO: Place measurements in buffer array
         // Hint: There is a function called pushBack
         //  in util.h that you can use here.
 
         // TODO: Apply filter to position coordinates
+        pushBack(movingAverage(n_pos, x_raw), x, buf_size);
+        pushBack(movingAverage(n_pos, y_raw), y, buf_size);
 
         // TODO: Compute velocity based on the filtered position signal
-
         // TODO: Place velocity in buffer array (use pushBack function)
-
+        pushBack(discreteDerivative(dt, x), vx_raw, buf_size);
+        pushBack(discreteDerivative(dt, y), vy_raw, buf_size);
+        
         // TODO: Apply filter to velocity
-
+        pushBack(movingAverage(n_vel, vx), vx_raw, buf_size);
+        pushBack(movingAverage(n_vel, vy), vy_raw, buf_size);
+        
         // TODO: Set reference depending on task
         switch (task_selection)
         {
-        case 4: /*TODO: Postlab Q4 centering task */
+          case 4: /*TODO: Postlab Q4 centering task */
+            x_ref = 0;
+            y_ref = 0;
+            vx_ref = 0;
+            vy_ref = 0;
+            break;
+          case 5: /*TODO: Postlab Q5 step response reference  --> use function in util.h */
           break;
-        case 5: /*TODO: Postlab Q5 step response reference  --> use function in util.h */
-          break;
-        case 6: /*TODO: Postlab Q6 circular trajectory reference --> implement & use function in util.h */
+          case 6: /*TODO: Postlab Q6 circular trajectory reference --> implement & use function in util.h */
           break;
         }
-
+        
         // TODO: Update Integrator after an initial delay
         // Hint: Wait 0.5s before starting to update integrator
+        if(current_time > 0.5){
+          x_integ += (x_integ - x_ref) * dt;
+          y_integ += (y_integ - y_ref) * dt;
+        }
 
         // TODO: Compute PID (remember, PID output is the plate angles)
-
         // TODO: Define Plate angles from PID output (watch out for correct sign)
-
+        plate_angles[0] = - k_i * x_integ + k_p * (x_ref - x[0]) + k_d * (vx_ref - vx[0]);
+        plate_angles[1] = - k_i * y_integ + k_p * (y_ref - y[0]) + k_d * (vy_ref - vy[0]);
+        
         // TODO: Compute servo angles and send command
-
+        inverseKinematics(plate_angles, servo_angles);
+        servoCommand(fd, servo_angles);
+        
+        // calculating dt based on the time passed in the while loop iter
+        // doing this at the end to avoid first iteration issues
+        dt = ((getMicroseconds() - t0) * 1.0e-6 - current_time);
+        current_time = (getMicroseconds() - t0) * 1.0e-6;
+        
         // Open logging file and log everything to textfile
         fp = fopen(datetime, "a");
         logger(fp, end, current_time, dt, k_p, k_d, k_i, x_ref, y_ref, vx_ref,
-               vy_ref, x_raw[0], y_raw[0], x[0], y[0], vx_raw[0], vy_raw[0],
-               vx[0], vy[0], plate_angles, servo_angles, x_integ, y_integ);
-      }
+          vy_ref, x_raw[0], y_raw[0], x[0], y[0], vx_raw[0], vy_raw[0],
+          vx[0], vy[0], plate_angles, servo_angles, x_integ, y_integ);
+        }
+        
+
+      
     }
   }
 

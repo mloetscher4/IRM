@@ -89,7 +89,14 @@ double discreteDerivative(const double dt, const double *x)
   /* ********************* */
   /* Insert your Code here */
   /* ********************* */
-  return 0;
+
+  // single precision finite difference approach
+  // vel = (x[0] - x[1]) / dt;
+
+  // more accurate approach backwards finit difference with precision of 3
+  double vel;
+  vel = ((11/6) * x[0] - 3 * x[1] + (3/2) * x[2] - (1/3) * x[3]) / dt;
+  return vel;
 };
 
 double movingAverage(const int n, const double *x)
