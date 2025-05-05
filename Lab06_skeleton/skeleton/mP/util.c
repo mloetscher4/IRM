@@ -1,5 +1,11 @@
 #include "util.h"
 #include "newton_raphson.h"
+#include <math.h>
+
+#define M_PI 3.14159265358979323846
+#define PI_2 (M_PI / 2.0)
+#define DEG2RAD(angle_deg) ((angle_deg) * M_PI / 180.0)
+#define RAD2DEG(angle_rad) ((angle_rad) * 180.0 / M_PI)
 
 int inverseKinematics(const double *plate_angles, double *servo_angles)
 {

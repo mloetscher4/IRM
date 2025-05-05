@@ -143,7 +143,7 @@ int main()
   {
 
     // TODO: Initialize default PID parameters
-    double k_p = 0;
+    double k_p = 0.03;
     double k_d = 0;
     double k_i = 0;
 
@@ -156,9 +156,9 @@ int main()
     /* Insert your Code here */
     /* ********************* */
     printf("Please enter the PID params Kp, Kd, Ki if you would like to change them!\n");
-    scanf("%f", &k_p);
-    scanf("%f", &k_d);
-    scanf("%f", &k_i);
+    scanf("%lf", &k_p);
+    scanf("%lf", &k_d);
+    scanf("%lf", &k_i);
 
 
     // Variables for Pixy2
@@ -190,8 +190,8 @@ int main()
     double y[buf_size];
     double vx[buf_size]; // filtered velocity
     double vy[buf_size];
-    double x_pixy;
-    double y_pixy;
+    int x_pixy;
+    int y_pixy;
 
     // initialize buffer arrays to zero
     for (int i = 0; i < buf_size; i++)
@@ -297,8 +297,8 @@ int main()
 
         // TODO: Compute PID (remember, PID output is the plate angles)
         // TODO: Define Plate angles from PID output (watch out for correct sign)
-        plate_angles[0] = - k_i * x_integ + k_p * (x_ref - x[0]) + k_d * (vx_ref - vx[0]);
-        plate_angles[1] = - k_i * y_integ + k_p * (y_ref - y[0]) + k_d * (vy_ref - vy[0]);
+        plate_angles[1] = - k_i * x_integ + k_p * (x_ref - x[0]) + k_d * (vx_ref - vx[0]);
+        plate_angles[0] = - k_i * y_integ + k_p * (y_ref - y[0]) + k_d * (vy_ref - vy[0]);
         
         // TODO: Compute servo angles and send command
         inverseKinematics(plate_angles, servo_angles);
