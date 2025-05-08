@@ -27,17 +27,17 @@ int load_parameters()
   // **These are dummy parameters and need to be replaced with your calibration**:
   // When pictures are taken in PixyMon, their resolution varies. This factor
   // accounts for this scaling, such that the bbs can be copied directly
-  bbs.calibration_image_scale = 2;
-  bbs.focal_length = 500;
-  bbs.radial_distortion_coeff[0] = -0.2;
-  bbs.radial_distortion_coeff[1] = 0.2;
-  bbs.distortion_center[0] = 500;
-  bbs.distortion_center[1] = 300;
+  bbs.calibration_image_scale = 3.54;
+  bbs.focal_length = 460.6139;
+  bbs.radial_distortion_coeff[0] = -0.2490;
+  bbs.radial_distortion_coeff[1] = 0.0531;
+  bbs.distortion_center[0] = 567.7938;
+  bbs.distortion_center[1] = 361.2566;
 
   // Adjust these if you experience a constant offset in your coordinates the world frame
-  bbs.t_wc[0] = 0;
-  bbs.t_wc[1] = 7;
-  bbs.t_wc[2] = 28.1;
+  bbs.t_wc[0] = -3+5;
+  bbs.t_wc[1] = 7+5;
+  bbs.t_wc[2] = -21;
 
   return 1;
 }
@@ -53,8 +53,8 @@ int load_servo()
   // **These are dummy parameters and need to be replaced with your calibration**:
 
   servo.bias_A = 0;
-  servo.bias_B = 0;
-  servo.bias_C = 0;
+  servo.bias_B = 9.936183-12.122352;
+  servo.bias_C = 14.292622-12.122352;
 
   return 1;
 }

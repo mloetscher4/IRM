@@ -96,12 +96,12 @@ double discreteDerivative(const double dt, const double *x)
   /* Insert your Code here */
   /* ********************* */
 
+  double vel;
   // single precision finite difference approach
-  // vel = (x[0] - x[1]) / dt;
+  vel = (x[0] - x[1]) / dt;
 
   // more accurate approach backwards finit difference with precision of 3
-  double vel;
-  vel = ((11/6) * x[0] - 3 * x[1] + (3/2) * x[2] - (1/3) * x[3]) / dt;
+  //vel = ((11/6) * x[0] - 3 * x[1] + (3/2) * x[2] - (1/3) * x[3]) / dt;
   return vel;
 };
 
@@ -395,8 +395,8 @@ int logger(FILE *fp,
 
   fprintf(
       fp,
-      "%lu %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
-      end_time, x_ref, y_ref, vx_ref, vy_ref, x_raw, y_raw, x, y, vx_raw,
+      "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
+      current_time, x_ref, y_ref, vx_ref, vy_ref, x_raw, y_raw, x, y, vx_raw,
       vy_raw, vx, vy);
   fclose(fp);
 

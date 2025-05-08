@@ -143,9 +143,9 @@ int main()
   {
 
     // TODO: Initialize default PID parameters
-    double k_p = 0.03;
-    double k_d = 0;
-    double k_i = 0;
+    double k_p = 0.087;
+    double k_d = 0.04;
+    double k_i = 0.01;
 
     // TODO: Intialize filter window size
     int n_pos = 10;
@@ -270,19 +270,20 @@ int main()
         pushBack(discreteDerivative(dt, y), vy_raw, buf_size);
         
         // TODO: Apply filter to velocity
-        pushBack(movingAverage(n_vel, vx), vx_raw, buf_size);
-        pushBack(movingAverage(n_vel, vy), vy_raw, buf_size);
+        pushBack(movingAverage(n_vel, vx_raw), vx, buf_size);
+        pushBack(movingAverage(n_vel, vy_raw), vy, buf_size);
         
         // TODO: Set reference depending on task
         switch (task_selection)
         {
           case 4: /*TODO: Postlab Q4 centering task */
-            x_ref = 0;
-            y_ref = 0;
-            vx_ref = 0;
-            vy_ref = 0;
+            x_ref = 0.0;
+            y_ref = 0.0;
+            vx_ref = 0.0;
+            vy_ref = 0.0;
             break;
           case 5: /*TODO: Postlab Q5 step response reference  --> use function in util.h */
+            stepResponse(current_time, &x_ref, &y_ref, &vx_ref, &vy_ref);
           break;
           case 6: /*TODO: Postlab Q6 circular trajectory reference --> implement & use function in util.h */
           break;
@@ -291,14 +292,14 @@ int main()
         // TODO: Update Integrator after an initial delay
         // Hint: Wait 0.5s before starting to update integrator
         if(current_time > 0.5){
-          x_integ += (x_integ - x_ref) * dt;
-          y_integ += (y_integ - y_ref) * dt;
+          x_integ += (x[0] - x_ref) * dt;
+          y_integ += (y[0] - y_ref) * dt;
         }
 
         // TODO: Compute PID (remember, PID output is the plate angles)
         // TODO: Define Plate angles from PID output (watch out for correct sign)
         plate_angles[1] = - k_i * x_integ + k_p * (x_ref - x[0]) + k_d * (vx_ref - vx[0]);
-        plate_angles[0] = - k_i * y_integ + k_p * (y_ref - y[0]) + k_d * (vy_ref - vy[0]);
+        plate_angles[0] = -(- k_i * y_integ + k_p * (y_ref - y[0]) + k_d * (vy_ref - vy[0]));
         
         // TODO: Compute servo angles and send command
         inverseKinematics(plate_angles, servo_angles);
