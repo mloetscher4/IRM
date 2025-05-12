@@ -157,7 +157,7 @@ int circularTrajectory(const double current_time, double *x_ref, double *y_ref,
   double traj_start = 3;
   double num_of_traj = 5;
   double period = 4; // seconds
-  double R = 80;     // radius
+  double R = 75;     // radius
 
   // TODO: Implement the circular trajectory function.
   //  Hint: Use the equations for parametrizing a cirlce (and its derivative)
