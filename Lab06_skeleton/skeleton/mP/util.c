@@ -160,10 +160,19 @@ int circularTrajectory(const double current_time, double *x_ref, double *y_ref,
 
   // TODO: Implement the circular trajectory function.
   //  Hint: Use the equations for parametrizing a cirlce (and its derivative)
-
-  /* ********************* */
-  /* Insert your Code here */
-  /* ********************* */
+  if(current_time < traj_start){
+    *x_ref = 0; 
+    *y_ref = 0; 
+    *vx_ref = 0; 
+    *vy_ref = 0; 
+  }
+  else{
+    double phase = (current_time-traj_start)*2*M_PI/period; 
+    *x_ref = R*sin(phase); 
+    *y_ref = R*cos(phase); 
+    *vx_ref = R*cos(phase)*2*M_PI/period;
+    *vy_ref = -R*sin(phase)*2*M_PI/period;
+  } 
 
   return 0;
 };

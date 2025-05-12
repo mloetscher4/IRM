@@ -286,6 +286,7 @@ int main()
             stepResponse(current_time, &x_ref, &y_ref, &vx_ref, &vy_ref);
           break;
           case 6: /*TODO: Postlab Q6 circular trajectory reference --> implement & use function in util.h */
+            circularTrajectory(current_time, &x_ref, &y_ref, &vx_ref, &vy_ref);
           break;
         }
         
