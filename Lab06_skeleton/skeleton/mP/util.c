@@ -118,7 +118,7 @@ double movingAverage(const int n, const double *x)
   return sum / n;
 };
 
-double butterWorth(const double *x)
+double butterWorth(const double *x, const double *y)
 {
   // TODO: Implement this if you like bonus points (not required to reach max points)
   //double b[3] = {0.0134, 0.0267, 0.0134};
@@ -128,15 +128,16 @@ double butterWorth(const double *x)
   double b[5] = {0.0048,    0.0193,    0.0289,    0.0193,    0.0048};
   double a[5] = {1.0000,   -2.3695,    2.3140,   -1.0547,    0.1874};
 
-  double den = 0.0; 
-  double num = 0.0; 
+  double result = 0.0; 
 
-  for(int i = 0; i<n; i++){
-    den += a[i]*x[i]; 
-    num += b[i]*x[i];
+  for(int i = 0; i<n; i++){ 
+    result += b[i]*x[i];
+    if(i >= 1){
+      result += a[i]*y[i-1];
+    } 
   }
-
-  return num/den;
+  result = result/a[0]; 
+  return result;
 };
 
 int stepResponse(const double current_time, double *x_ref, double *y_ref,
