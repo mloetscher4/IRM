@@ -133,7 +133,7 @@ double butterWorth(const double *x, const double *y)
   for(int i = 0; i<n; i++){ 
     result += b[i]*x[i];
     if(i >= 1){
-      result += a[i]*y[i-1];
+      result -= a[i]*y[i-1];
     } 
   }
   result = result/a[0]; 
