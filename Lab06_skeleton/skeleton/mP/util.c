@@ -125,8 +125,8 @@ double butterWorth(const double *x)
   //double a[3] = {1.0000, -1.6475, 0.7009};
   
   int n = 5;
-  double b[5] = {0.0002, 0.0007, 0.0011, 0.0007, 0.0002};
-  double a[5] = {1.0000,-3.3441,4.2389,-2.4093,0.5175};
+  double b[5] = {0.0466, 0.1863,    0.2795,    0.1863,    0.0466};
+  double a[5] = {1.0000,   -0.7821,    0.6800,   -0.1827,    0.0301};
 
   double den = 0.0; 
   double num = 0.0; 
@@ -135,7 +135,7 @@ double butterWorth(const double *x)
     den += a[i]*x[i]; 
     num += b[i]*x[i];
   }
-  
+
   return num/den;
 };
 
