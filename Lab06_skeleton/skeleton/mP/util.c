@@ -124,9 +124,9 @@ double butterWorth(const double *x, const double *y)
   //double b[3] = {0.0134, 0.0267, 0.0134};
   //double a[3] = {1.0000, -1.6475, 0.7009};
   
-  int n = 5;
-  double b[5] = {0.0048,    0.0193,    0.0289,    0.0193,    0.0048};
-  double a[5] = {1.0000,   -2.3695,    2.3140,   -1.0547,    0.1874};
+  int n = 3;
+  double b[3] = {0.0134, 0.0267, 0.0134};
+  double a[3] = {1.0, -1.6475, 0.7009};
 
   double result = 0.0; 
 

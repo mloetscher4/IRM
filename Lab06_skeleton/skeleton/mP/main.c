@@ -270,8 +270,12 @@ int main()
         pushBack(discreteDerivative(dt, y), vy_raw, buf_size);
         
         // TODO: Apply filter to velocity
-        pushBack(movingAverage(n_vel, vx_raw), vx, buf_size);
-        pushBack(movingAverage(n_vel, vy_raw), vy, buf_size);
+        //pushBack(movingAverage(n_vel, vx_raw), vx, buf_size);
+        //pushBack(movingAverage(n_vel, vy_raw), vy, buf_size);
+        double vx_filtered = butterWorth(vx_raw, vx);
+        double vy_filtered = butterWorth(vy_raw, vy);
+        pushBack(vx_filtered, vx, buf_size);
+        pushBack(vy_filtered, vy, buf_size);
         
         // TODO: Set reference depending on task
         switch (task_selection)

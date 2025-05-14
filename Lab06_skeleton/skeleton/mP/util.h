@@ -72,7 +72,7 @@ double discreteDerivative(const double dt, const double *x);
 */
 double movingAverage(const int n, const double *x);
 
-double butterWorth(const double *x);
+double butterWorth(const double *x, const double *y);
 
 /*step response
  current_time: current timestep (step should execute after this reaches a certain treshhold, e.g. 5 sec)
